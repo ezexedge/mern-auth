@@ -1,20 +1,34 @@
-const express = require('express')
-const router = express.Router()
+const express = require('express');
+const router = express.Router();
 
+// import controller
+const {
+    signup,
+    accountActivation,
+    signin,
+    forgotPassword,
+    resetPassword,
+    googleLogin,
+    facebookLogin
+} = require('../controllers/auth');
 
-const {signup,accountActivation,signin , forgotPassword,resetPassword,googleLogin,facebookLogin} = require('../controllers/auth')
-const {userSignupValidator , userSigninValidator, forgotPasswordValidator,resetPasswordValidator} = require("../validators/auth")
-const  {runValidator} = require("../validators/index")
+// import validators
+const {
+    userSignupValidator,
+    userSigninValidator,
+    forgotPasswordValidator,
+    resetPasswordValidator
+} = require('../validators/auth');
+const { runValidation } = require('../validators');
 
-router.post("/signup",userSignupValidator,runValidator,signup)
-router.post("/account-activation",accountActivation)
-router.post("/signin", userSigninValidator,runValidator,signin)
-//forgot reset password
-router.put('/forgot-password', forgotPasswordValidator , runValidator,forgotPassword)
-router.put('/reset-password', resetPasswordValidator , runValidator,resetPassword)
-//face google
-router.post('/google-login',googleLogin)
-router.post('/facebook-login',facebookLogin)
+router.post('/signup', userSignupValidator, runValidation, signup);
+router.post('/account-activation', accountActivation);
+router.post('/signin', userSigninValidator, runValidation, signin);
+// forgot reset password
+router.put('/forgot-password', forgotPasswordValidator, runValidation, forgotPassword);
+router.put('/reset-password', resetPasswordValidator, runValidation, resetPassword);
+// google and facebook
+router.post('/google-login', googleLogin);
+router.post('/facebook-login', facebookLogin);
 
-
-module.exports = router
+module.exports = router;

@@ -1,43 +1,39 @@
-const User = require("../model/user")
-const jwt = require("jsonwebtoken")
-const expressJwt = require("express-jwt")
-const _ = require('lodash')
-const {OAuth2Client} = require('google-auth-library')
-const fetch = require('node-fetch')
-const sgMail = require("@sendgrid/mail")
+const User = require('../models/user');
+const jwt = require('jsonwebtoken');
+const expressJwt = require('express-jwt');
+const _ = require('lodash');
+const { OAuth2Client } = require('google-auth-library');
+const fetch = require('node-fetch');
+// sendgrid
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+// exports.signup = (req, res) => {
+//     // console.log('REQ BODY ON SIGNUP', req.body);
+//     const { name, email, password } = req.body;
 
-/*
-exports.signup = (req,res)=>{
-    const {name , email , password} = req.body
-    User.findOne({email}).exec((err,user)=>{
-        if(user){
-            return res.status(400).json({
-                error: "email is take"
-            })
-        }
+//     User.findOne({ email }).exec((err, user) => {
+//         if (user) {
+//             return res.status(400).json({
+//                 error: 'Email is taken'
+//             });
+//         }
+//     });
 
-        let newUser = new User({name,email,password})
+//     let newUser = new User({ name, email, password });
 
-        newUser.save((err,success)=>{
-            if(err){
-                console.log("signup",err)
-                return res.status(400).json({
-                    error: err
-                })
-
-
-            }
-
-            res.json({
-                message: "signup success "
-            })
-        })
-
-    })
-}
-*/
+//     newUser.save((err, success) => {
+//         if (err) {
+//             console.log('SIGNUP ERROR', err);
+//             return res.status(400).json({
+//                 error: err
+//             });
+//         }
+//         res.json({
+//             message: 'Signup success! Please signin'
+//         });
+//     });
+// };
 
 exports.signup = (req, res) => {
     const { name, email, password } = req.body;
@@ -49,7 +45,7 @@ exports.signup = (req, res) => {
             });
         }
 
-        const token = jwt.sign({ name, email, password }, process.env.JWT_ACCOUNT_ACTIVATION, { expiresIn: '7d' });
+        const token = jwt.sign({ name, email, password }, process.env.JWT_ACCOUNT_ACTIVATION, { expiresIn: '10m' });
 
         const emailData = {
             from: process.env.EMAIL_FROM,
@@ -175,7 +171,9 @@ exports.forgotPassword = (req, res) => {
             });
         }
 
-        const token = jwt.sign({ _id: user._id , name : user.name}, process.env.JWT_RESET_PASSWORD, { expiresIn: '7d' });
+        const token = jwt.sign({ _id: user._id, name: user.name }, process.env.JWT_RESET_PASSWORD, {
+            expiresIn: '10m'
+        });
 
         const emailData = {
             from: process.env.EMAIL_FROM,
@@ -256,8 +254,7 @@ exports.resetPassword = (req, res) => {
     }
 };
 
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID )
-
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 exports.googleLogin = (req, res) => {
     const { idToken } = req.body;
 
@@ -299,7 +296,6 @@ exports.googleLogin = (req, res) => {
         }
     });
 };
-
 
 exports.facebookLogin = (req, res) => {
     console.log('FACEBOOK LOGIN REQ BODY', req.body);

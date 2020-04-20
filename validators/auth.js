@@ -27,15 +27,13 @@ exports.forgotPasswordValidator = [
         .not()
         .isEmpty()
         .isEmail()
-        .withMessage('Must be a valid email address'),
-
+        .withMessage('Must be a valid email address')
 ];
 
 exports.resetPasswordValidator = [
     check('newPassword')
         .not()
         .isEmpty()
-        .isLength({min:6})
+        .isLength({ min: 6 })
         .withMessage('Password must be at least  6 characters long')
-
 ];
