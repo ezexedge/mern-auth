@@ -5,7 +5,7 @@ exports.read = (req, res) => {
     User.findById(userId).exec((err, user) => {
         if (err || !user) {
             return res.status(400).json({
-                error: 'User not found'
+                error: 'usuario no encontrado'
             });
         }
         user.hashed_password = undefined;
@@ -21,12 +21,12 @@ exports.update = (req, res) => {
     User.findOne({ _id: req.user._id }, (err, user) => {
         if (err || !user) {
             return res.status(400).json({
-                error: 'User not found'
+                error: 'Usario no encontrado'
             });
         }
         if (!name) {
             return res.status(400).json({
-                error: 'Name is required'
+                error: 'el nombre es necesario'
             });
         } else {
             user.name = name;
@@ -35,7 +35,7 @@ exports.update = (req, res) => {
         if (password) {
             if (password.length < 6) {
                 return res.status(400).json({
-                    error: 'Password should be min 6 characters long'
+                    error: 'Password debe tener un min de 6 caracteres'
                 });
             } else {
                 user.password = password;
@@ -46,7 +46,7 @@ exports.update = (req, res) => {
             if (err) {
                 console.log('USER UPDATE ERROR', err);
                 return res.status(400).json({
-                    error: 'User update failed'
+                    error: 'modificacion erronea'
                 });
             }
             updatedUser.hashed_password = undefined;

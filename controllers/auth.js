@@ -41,7 +41,7 @@ exports.signup = (req, res) => {
     User.findOne({ email }).exec((err, user) => {
         if (user) {
             return res.status(400).json({
-                error: 'Email is taken'
+                error: 'posees una cuenta'
             });
         }
 
@@ -50,9 +50,9 @@ exports.signup = (req, res) => {
         const emailData = {
             from: process.env.EMAIL_FROM,
             to: email,
-            subject: `Account activation link`,
+            subject: `Activar cuenta`,
             html: `
-                <h1>Please use the following link to activate your account</h1>
+                <h1>has click para activar tu cuenta</h1>
                 <p>${process.env.CLIENT_URL}/auth/activate/${token}</p>
                 <hr />
                 <p>This email may contain sensetive information</p>
@@ -85,7 +85,7 @@ exports.accountActivation = (req, res) => {
             if (err) {
                 console.log('JWT VERIFY IN ACCOUNT ACTIVATION ERROR', err);
                 return res.status(401).json({
-                    error: 'Expired link. Signup again'
+                    error: 'ya expiro el link, vuelva a intentarlo'
                 });
             }
 
@@ -97,17 +97,17 @@ exports.accountActivation = (req, res) => {
                 if (err) {
                     console.log('SAVE USER IN ACCOUNT ACTIVATION ERROR', err);
                     return res.status(401).json({
-                        error: 'Error saving user in database. Try signup again'
+                        error: 'error para guardar en base de datos, intenlo de nuevo'
                     });
                 }
                 return res.json({
-                    message: 'Signup success. Please signin.'
+                    message: 'operacion exitosa, inicie sesion.'
                 });
             });
         });
     } else {
         return res.json({
-            message: 'Something went wrong. Try again.'
+            message: 'tuvimos un problema , vuelva a intentarlo.'
         });
     }
 };
@@ -118,13 +118,13 @@ exports.signin = (req, res) => {
     User.findOne({ email }).exec((err, user) => {
         if (err || !user) {
             return res.status(400).json({
-                error: 'User with that email does not exist. Please signup'
+                error: 'El email no existe en nuestra base de datos, vuelva intentarlo'
             });
         }
         // authenticate
         if (!user.authenticate(password)) {
             return res.status(400).json({
-                error: 'Email and password do not match'
+                error: 'el email o el password no son correctos'
             });
         }
         // generate a token and send to client
@@ -146,13 +146,13 @@ exports.adminMiddleware = (req, res, next) => {
     User.findById({ _id: req.user._id }).exec((err, user) => {
         if (err || !user) {
             return res.status(400).json({
-                error: 'User not found'
+                error: 'Usuario no encontrado'
             });
         }
 
         if (user.role !== 'admin') {
             return res.status(400).json({
-                error: 'Admin resource. Access denied.'
+                error: 'Solo el administrados, acceso denegado.'
             });
         }
 
@@ -167,7 +167,7 @@ exports.forgotPassword = (req, res) => {
     User.findOne({ email }, (err, user) => {
         if (err || !user) {
             return res.status(400).json({
-                error: 'User with that email does not exist'
+                error: 'este email no existe en la base de datos'
             });
         }
 
@@ -178,12 +178,12 @@ exports.forgotPassword = (req, res) => {
         const emailData = {
             from: process.env.EMAIL_FROM,
             to: email,
-            subject: `Password Reset link`,
+            subject: `Reestablesca la base datos`,
             html: `
-                <h1>Please use the following link to reset your password</h1>
+                <h1>Has click en el link para volver a reestablecer la contrasena</h1>
                 <p>${process.env.CLIENT_URL}/auth/password/reset/${token}</p>
                 <hr />
-                <p>This email may contain sensetive information</p>
+                <p>este email posee contenido sensible</p>
                 <p>${process.env.CLIENT_URL}</p>
             `
         };
@@ -200,7 +200,7 @@ exports.forgotPassword = (req, res) => {
                     .then(sent => {
                         // console.log('SIGNUP EMAIL SENT', sent)
                         return res.json({
-                            message: `Email has been sent to ${email}. Follow the instruction to activate your account`
+                            message: `Se envio un correo a esta cuenta ${email}.Active su cuenta`
                         });
                     })
                     .catch(err => {
@@ -221,14 +221,14 @@ exports.resetPassword = (req, res) => {
         jwt.verify(resetPasswordLink, process.env.JWT_RESET_PASSWORD, function(err, decoded) {
             if (err) {
                 return res.status(400).json({
-                    error: 'Expired link. Try again'
+                    error: 'Expiro el link , vuelva a intentarlo'
                 });
             }
 
             User.findOne({ resetPasswordLink }, (err, user) => {
                 if (err || !user) {
                     return res.status(400).json({
-                        error: 'Something went wrong. Try later'
+                        error: 'upps, erro intentelo luego'
                     });
                 }
 
@@ -242,11 +242,11 @@ exports.resetPassword = (req, res) => {
                 user.save((err, result) => {
                     if (err) {
                         return res.status(400).json({
-                            error: 'Error resetting user password'
+                            error: 'error vuelve a escribir el password'
                         });
                     }
                     res.json({
-                        message: `Great! Now you can login with your new password`
+                        message: `Genial vuelve iniciar sesion con su nuevo password`
                     });
                 });
             });
